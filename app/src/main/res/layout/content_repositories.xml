@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="#e1e1e1"
+    android:orientation="vertical" >
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:layout_gravity="center_vertical"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <EditText android:id="@+id/searchRepositoryEditText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:hint="Enter Github username" android:layout_marginLeft="5dp"/>
+            <Button
+                android:id="@+id/searchRepositoryButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="0.2"
+                android:drawableLeft="@android:drawable/ic_search_category_default"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/repositoriesListView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
+
+
+
+</RelativeLayout>

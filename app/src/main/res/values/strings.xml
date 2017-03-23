@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">git-app</string>
+    <string name="title_repository_activity">List user repositories</string>
+    <string name="title_commits_activity">Repository commits</string>
+</resources>

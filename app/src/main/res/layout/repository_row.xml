@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:paddingTop="4dp"  android:paddingBottom="4dp"
+    android:paddingLeft="10dp"  android:paddingRight="4dp">
+    <ImageView
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/gitcat"/>
+    <TextView
+        android:id="@+id/repositoryNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="5dip"
+        android:paddingLeft="20dip"
+        android:fontFeatureSettings=""
+        android:text="Hello bubbles! fwef ewfew few fe fwe ew few  "
+        android:textStyle="bold"
+        android:textColor="@android:color/primary_text_light" />
+</LinearLayout>
