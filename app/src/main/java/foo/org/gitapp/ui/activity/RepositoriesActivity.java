@@ -24,12 +24,16 @@ import com.google.gson.*;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import foo.org.gitapp.DI.DaggerGithubComponent;
+import foo.org.gitapp.DI.GithubModule;
 import foo.org.gitapp.R;
 import foo.org.gitapp.models.Repository;
 import foo.org.gitapp.ui.adapters.RepositoryListAdapter;
 import foo.org.gitapp.util.GithubClient;
 
 import com.orhanobut.logger.Logger;
+
+import javax.inject.Inject;
 
 /**
  * Created by enoks on 22.2.2017.
@@ -51,7 +55,8 @@ public class RepositoriesActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
 
     private RepositoryListAdapter repositoryListAdapter;
-    private GithubClient githubClient;
+    @Inject
+    GithubClient githubClient;
 
 
     @Override
@@ -61,6 +66,7 @@ public class RepositoriesActivity extends AppCompatActivity {
         setTitle(R.string.title_repository_activity);
         setContentView(R.layout.activity_repositories);
         ButterKnife.bind(this);
+        DaggerGithubComponent.builder().githubModule(new GithubModule()).build().inject(this);
 
         repositoryListAdapter = new RepositoryListAdapter(this);
         repositoriesListView.setAdapter(repositoryListAdapter);
@@ -75,7 +81,6 @@ public class RepositoriesActivity extends AppCompatActivity {
             }
         });
 
-        githubClient = GithubClient.getInstance();
         setSupportActionBar(toolbar);
 
     }

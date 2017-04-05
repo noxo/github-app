@@ -33,18 +33,6 @@ public class GithubClient {
     private final String MAX_ITEMS = "10";
     private final String STARTING_FROM_PAGE = "1";
 
-    private GithubClient()
-    {
-    }
-
-    public static GithubClient getInstance() {
-        synchronized (GithubClient.class){
-            if (instance == null) {
-                instance = new GithubClient();
-            }
-        }
-        return instance;
-    }
 
     private void get(Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         // 403 if not set

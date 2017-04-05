@@ -16,8 +16,12 @@ import com.orhanobut.logger.Logger;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import foo.org.gitapp.DI.DaggerGithubComponent;
+import foo.org.gitapp.DI.GithubModule;
 import foo.org.gitapp.R;
 import foo.org.gitapp.models.Commit;
 import foo.org.gitapp.ui.adapters.CommitListAdapter;
@@ -39,7 +43,8 @@ public class CommitsActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
 
     private CommitListAdapter commitListAdapter;
-    private GithubClient githubClient;
+    @Inject
+    GithubClient githubClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +52,10 @@ public class CommitsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_commits);
         ButterKnife.bind(this);
+        DaggerGithubComponent.builder().githubModule(new GithubModule()).build().inject(this);
 
         commitListAdapter = new CommitListAdapter(this);
         chatMessagesList.setAdapter(commitListAdapter);
-        githubClient = GithubClient.getInstance();
 
         setSupportActionBar(toolbar);
         pullCommits();
