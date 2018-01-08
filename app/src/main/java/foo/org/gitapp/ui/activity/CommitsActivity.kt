@@ -10,21 +10,15 @@ import android.view.View
 import android.widget.ListView
 import android.widget.ProgressBar
 
-import com.google.gson.Gson
-import com.orhanobut.logger.Logger
-
-import java.util.Arrays
-
 import javax.inject.Inject
-
 import butterknife.BindView
 import butterknife.ButterKnife
 import foo.org.gitapp.DI.DaggerGithubComponent
 import foo.org.gitapp.DI.GithubModule
 import foo.org.gitapp.R
-import foo.org.gitapp.models.Commit
 import foo.org.gitapp.ui.adapters.CommitListAdapter
-import foo.org.gitapp.util.GithubClient
+import foo.org.gitapp.util.GithubRetroFitClient
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Created by enoks on 22.2.2017.
@@ -41,7 +35,7 @@ class CommitsActivity : AppCompatActivity() {
     @BindView(R.id.mainLayout)
     lateinit var coordinatorLayout: CoordinatorLayout
     @Inject
-    lateinit var githubClient: GithubClient
+    lateinit var githubRetroClient: GithubRetroFitClient
 
     lateinit var commitListAdapter: CommitListAdapter
 
@@ -68,21 +62,17 @@ class CommitsActivity : AppCompatActivity() {
 
         showProgress(true)
 
-        githubClient.getCommits(this, githubUsername, githubRepositoryName, object : GithubClient.GithubClientHandler {
-            override fun success(jsonString: String) {
-                val gson = Gson()
-                val commits = Arrays.asList(*gson.fromJson<Array<Commit>>(jsonString, Array<Commit>::class.java!!))
-                commitListAdapter.update(commits)
-                Logger.i("messages pulled")
-                showProgress(false)
-            }
-
-            override fun fail(error: Throwable, frienlyErrorMsg: String) {
-                Logger.e(error, "failed pulling messages")
-                showProgress(false)
-                showError(frienlyErrorMsg)
-            }
-        })
+        githubRetroClient.getCommits(githubUsername, githubRepositoryName)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe ({
+                    result ->
+                    showProgress(false)
+                    commitListAdapter.update(result)
+                }, { error ->
+                    showProgress(false)
+                    showError(error.toString())
+                })
 
     }
 

@@ -8,17 +8,13 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 
 import android.support.v7.widget.Toolbar
+
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.ProgressBar
-
-import java.util.Arrays
-
-
-import com.google.gson.*
 
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -28,9 +24,11 @@ import foo.org.gitapp.DI.GithubModule
 import foo.org.gitapp.R
 import foo.org.gitapp.models.Repository
 import foo.org.gitapp.ui.adapters.RepositoryListAdapter
-import foo.org.gitapp.util.GithubClient
 
-import com.orhanobut.logger.Logger
+
+import foo.org.gitapp.util.GithubRetroFitClient
+import io.reactivex.schedulers.Schedulers
+
 import javax.inject.Inject
 
 /**
@@ -52,7 +50,8 @@ class RepositoriesActivity : AppCompatActivity() {
     @BindView(R.id.mainLayout)
     lateinit var coordinatorLayout: CoordinatorLayout
     @Inject
-    lateinit var githubClient: GithubClient
+    lateinit var githubRetroClient: GithubRetroFitClient
+
     lateinit var repositoryListAdapter: RepositoryListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,30 +79,26 @@ class RepositoriesActivity : AppCompatActivity() {
 
     @OnClick(R.id.searchRepositoryButton)
     internal fun searchRepositories() {
+
         val githubUsername = searchRepositoryEditText.text.toString()
+        showProgress(true);
+        githubRetroClient.getRepositories(githubUsername)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(io.reactivex.android.schedulers.AndroidSchedulers.mainThread())
+                .subscribe ({
+                    result ->
+                    showProgress(false)
+                    repositoryListAdapter.update(result)
+                }, { error ->
+                    showProgress(false)
+                    showError(error.toString())
+                })
 
-        showProgress(true)
-        repositoryListAdapter.clear()
-
-        githubClient.getRepositories(this, githubUsername, object : GithubClient.GithubClientHandler {
-            override fun success(jsonString: String) {
-                val gson = Gson()
-                val repositories = Arrays.asList(*gson.fromJson<Array<Repository>>(jsonString, Array<Repository>::class.java!!))
-                Logger.i("repositories pulled")
-                showProgress(false)
-                repositoryListAdapter.update(repositories)
-            }
-
-            override fun fail(error: Throwable, frienlyErrorMsg: String) {
-                Logger.e(error, "failed pulling repositories")
-                showError(frienlyErrorMsg)
-                showProgress(false)
-            }
-        })
     }
 
+
     private fun showError(msg: String) {
-        val snackbar = Snackbar.make(coordinatorLayout!!, msg, Snackbar.LENGTH_LONG)
+        val snackbar = Snackbar.make(coordinatorLayout, msg, Snackbar.LENGTH_LONG)
         snackbar.view.setBackgroundColor(Color.RED)
         snackbar.show()
     }
